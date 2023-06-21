@@ -14,20 +14,58 @@
         </p>
         <hr class="my-4" />
         <form class="row g-8 col-auto" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-          <div class="col-auto">
+          <!-- <div class="col-auto">
             <label for="image" class="form-control-plaintext">Upload Image:</label>
           </div>
           <div class="col-8">
             <input type="file" class="form-control" name="image" id="image-input" onchange="previewImage();" accept=".jpg,.jpeg,.png" />
           </div>
+          <div class="col-8">
+            <select name="scale" id="scale">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
           <div class="col-auto">
             <input type="submit" class="btn btn-primary mb-3" value="Enhance Image" />
+          </div> -->
+
+          <div class="mb-3">
+            <label for="imageInput" class="form-label">Upload Image</label>
+            <input type="file" class="form-control" name="image" id="image-input" onchange="previewImage();" accept="image/*" />
           </div>
+
+          <div class="mb-3">
+            <label for="scaleSelect" class="form-label">Scale (1-5)</label>
+            <select class="form-select" id="scaleSelect">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="faceEnhanceCheck" />
+            <label class="form-check-label" for="faceEnhanceCheck">Face Enhance</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         <div class="row mt-5">
           <div class="col-md-6 text-center">
             <h3 class="mb-3">Original Image:</h3>
-            <div id="original" class="placeholder-glow"></div>
+            <div id="original" class="placeholder-glow">
+              <img id="preview" class="img-fluid" />
+            </div>
           </div>
           <div class="col-md-6 text-center">
             <h3 class="mb-3">Enhanced Image:</h3>
@@ -39,21 +77,12 @@
     <script>
       function previewImage() {
         var original = document.getElementById('original');
+        var img = document.createElement('img');
         var file = document.getElementById('image-input').files[0];
         var reader = new FileReader();
         reader.onloadend = function () {
-          var img = document.createElement('img');
-          img.src = reader.result;
-          img.classList.add('img-fluid');
-
-          // Get the dimensions of the image
-          var realWidth = img.naturalWidth;
-          var realHeight = img.naturalHeight;
-
-          img.width = realWidth * 4;
-          img.height = realHeight * 4;
-
-          original.appendChild(img);
+          var preview = document.getElementById('preview');
+          preview.src = reader.result;
         };
         reader.readAsDataURL(file); // read the file as a data URL
       }
@@ -63,10 +92,14 @@
         event.preventDefault();
 
         var file = document.querySelector('input[type=file]').files[0];
+        const scaleSelect = document.getElementById('scaleSelect');
+        const selectedScale = scaleSelect.value;
+        const faceEnhanceCheck = document.getElementById('faceEnhanceCheck');
+        const isFaceEnhanced = faceEnhanceCheck.checked;
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = async () => {
-          const url = await uploadImage(reader.result);
+          const url = await uploadImage(reader.result, selectedScale, isFaceEnhanced);
           enhanced.innerHTML = `<img class="img-fluid" src="${url}" > <br/> <a href="${reader.result}" class="btn btn-primary" download>Download</a>`;
         };
       });
