@@ -108,13 +108,14 @@
         try {
           const response = await fetch('https://image-upscaleing.vercel.app/api/upload', {
             method: 'POST',
+            credentials: 'include',
             body: JSON.stringify({ image: base64EncodedImage, scale: scale, face_enhance: face_enhance }),
             headers: { 'Content-Type': 'application/json' },
           });
           const { url } = await response.json();
           return url;
         } catch (err) {
-          console.error(err);
+          console.error(err.message);
         }
       };
     </script>
