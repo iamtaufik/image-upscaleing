@@ -100,7 +100,7 @@
         reader.readAsDataURL(file);
         reader.onloadend = async () => {
           const url = await uploadImage(reader.result, selectedScale, isFaceEnhanced);
-          enhanced.innerHTML = `<img class="img-fluid" src="${url}" > <br/> <a href="${reader.result}" class="btn btn-primary" download>Download</a>`;
+          enhanced.innerHTML = `<img class="img-fluid" src="${url}" > <br/> <a href="${url}" class="btn btn-primary" download>Download</a>`;
         };
       });
 
